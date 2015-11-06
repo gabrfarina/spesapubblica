@@ -2,7 +2,7 @@
 
 angular
 .module("spesapubblica")
-.factory("mapchart", ['$state', 'info', 'dataloader', function($state, info, dataloader) {
+.factory("mapchart", ['$rootScope', '$state', 'info', 'dataloader', function($rootScope, $state, info, dataloader) {
     var me = {}
 
     /******************************************************************/
@@ -10,9 +10,9 @@ angular
     /******************************************************************/
 
     $("#map")
-        .width($("#map").parent().width())
         .height(window.innerHeight - 64 - 40*2);
 
+    // TODO: this part can be called before _id_2_dom_<whatever> has been computed!
     $(window).resize(_.debounce(function(e) {
         $("#map")
             .width($("#map").parent().width())
@@ -20,6 +20,12 @@ angular
 
         me._fit_to_viewport()
     }, 100))
+
+    $rootScope.$watch(function() {
+        return $("#map").width()
+    }, function() {
+        $(window).resize()
+    })
 
     /******************************************************************/
     /* Constants                                                      */
@@ -50,7 +56,7 @@ angular
     me._g = null;
 
     // list of interesting IDs of stuff to report when coloring areas
-    me._interesting = [1]
+    me._interesting = []
 
     // Bounds for Italy geometry
     me._italy_geometry = null;
@@ -798,10 +804,19 @@ angular
     };
 
     me.update_colors = function(granularity) {
-        console.log(JSON.stringify(info.selected_categories))
-        if (info.selected_categories.length < 1) {
-            return
+        console.log("Multiple: " + info.multiple_selection)
+        if (info.multiple_selection) {
+            if (info.selected_categories.length > 0) {
+                me.interesting = info.selected_categories
+            } else {
+                return  // check this case
+            }
+        } else {
+            me.interesting = [info.radio_selected]
         }
+
+        console.log(JSON.stringify(me.interesting))
+
         dataloader.prepare_reports.done(function() {
             if (granularity == 3) {
                 me._style_comuni();
@@ -817,36 +832,12 @@ angular
         return "hsl(" + Math.floor(240 - Math.random() * 60) + ",80%,40%)";
     }
 
-    me._aggregate_comune = function(comune_id) {
+    me._aggregate_data = function(datatype, id, expenses) {
         var s = 0;
-        for (var i in info.selected_categories) {
-            if (dataloader._comune_report.hasOwnProperty(comune_id)
-                    && dataloader._comune_report[comune_id].hasOwnProperty(info.selected_categories[i]))
-                s += parseFloat(dataloader._comune_report[comune_id][info.selected_categories[i]]);
-            else
-                return -1;
-        }
-        return s;
-    }
-
-    me._aggregate_provincia = function(provincia_id) {
-        var s = 0;
-        for (var i in info.selected_categories) {
-            if (dataloader._provincia_report.hasOwnProperty(provincia_id)
-                    && dataloader._provincia_report[provincia_id].hasOwnProperty(info.selected_categories[i]))
-                s += parseFloat(dataloader._provincia_report[provincia_id][info.selected_categories[i]]);
-            else
-                return -1;
-        }
-        return s;
-    }
-
-    me._aggregate_regione = function(regione_id) {
-        var s = 0;
-        for (var i in info.selected_categories) {
-            if (dataloader._regione_report.hasOwnProperty(regione_id)
-                    && dataloader._regione_report[regione_id].hasOwnProperty(info.selected_categories[i]))
-                s += parseFloat(dataloader._regione_report[regione_id][info.selected_categories[i]]);
+        for (var i in expenses) {
+            if (dataloader["_" + datatype + "_report"].hasOwnProperty(id)
+                    && dataloader["_" + datatype + "_report"][id].hasOwnProperty(expenses[i]))
+                s += parseFloat(dataloader["_" + datatype + "_report"][id][expenses[i]]);
             else
                 return -1;
         }
@@ -868,17 +859,38 @@ angular
     }
 
     me._style_comuni = function() {
+        me._pie_data.rows = []  // clear
+
+        var totals = Array.apply(null, Array(info.num_categories + 1)).map(Number.prototype.valueOf, 0)  // in ES6: new Array(size).fill(0)
+
         var expenses = []
         d3.selectAll(".comune").each(function(d) {
-            var expense = me._aggregate_comune(d.id);
+            var expense = me._aggregate_data("comune", d.id, me.interesting)
             if (expense > 0)
                 expenses.push(expense);
-        });
+
+            for (var i=1; i<=info.num_categories; i++) {
+                var tmp = me._aggregate_data("comune", d.id, [i])
+                if (tmp > 0) {
+                    totals[i] += tmp
+                }
+            }
+        })
+
+        for (var i=1; i<=info.num_categories; i++) {
+            me._pie_data.rows.push({
+                c: [
+                    {v: info.category_id_2_label[i]},
+                    {v: totals[i]}
+                ]
+            })
+        }
+
         var mean = math.mean(expenses);
         var std = math.std(expenses);
         var margin = Math.min(mean, 3.0 * std);
         d3.selectAll(".comune").each(function(d) {
-            var expense = me._aggregate_comune(d.id);
+            var expense = me._aggregate_data("comune", d.id, me.interesting)
             // console.log("Comune " + d.id + ": " + expense);
 
             if (expense > 0)
@@ -887,45 +899,91 @@ angular
                 d3.select(this).style("fill", "rgb(145, 145, 145)");
         });
     }
+
     me._style_provinces = function() {
+        me._pie_data.rows = []  // clear
+
         var expenses = []
         _.each(dataloader._provincia_report, function(v, province_id) {
-            var expense = me._aggregate_provincia(province_id);
+            var expense = me._aggregate_data("provincia", province_id, me.interesting)
             if (expense > 0)
-                expenses.push(expense);
-        });
+                expenses.push(expense)
+        })
+
         var mean = math.mean(expenses);
         var std = math.std(expenses);
         var margin = Math.min(mean, 3.0 * std);
+
+        var totals = Array.apply(null, Array(info.num_categories + 1)).map(Number.prototype.valueOf, 0)  // in ES6: new Array(size).fill(0)
+
         d3.selectAll(".province").each(function(d) {
-            var expense = me._aggregate_provincia(d.properties.id);
+            var expense = me._aggregate_data("provincia", d.properties.id, me.interesting)
             // console.log("Provincia " + d.properties.id + ": " + expense);
 
             if (expense > 0)
                 d3.select(this).style("fill", me._interpolate_color(expense, mean, margin));
             else
                 d3.select(this).style("fill", "rgb(145, 145, 145)");
-        });
+
+            for (var i=1; i<=info.num_categories; i++) {
+                var tmp = me._aggregate_data("provincia", d.properties.id, [i])
+                if (tmp > 0) {
+                    totals[i] += tmp
+                }
+            }
+        })
+
+        for (var i=1; i<=info.num_categories; i++) {
+            me._pie_data.rows.push({
+                c: [
+                    {v: info.category_id_2_label[i]},
+                    {v: totals[i]}
+                ]
+            })
+        }
     }
+
     me._style_regions = function() {
+        me._pie_data.rows = []  // clear
+
         var expenses = []
         _.each(dataloader._regione_report, function(v, region_id) {
-            var expense = me._aggregate_regione(region_id);
+            var expense = me._aggregate_data("regione", region_id, me.interesting)
             if (expense > 0)
-                expenses.push(expense);
-        });
+                expenses.push(expense)
+        })
+
         var mean = math.mean(expenses);
         var std = math.std(expenses);
         var margin = Math.min(mean, 3.0 * std);
+
+        var totals = Array.apply(null, Array(info.num_categories + 1)).map(Number.prototype.valueOf, 0)  // in ES6: new Array(size).fill(0)
+
         d3.selectAll(".region").each(function(d) {
-            var expense = me._aggregate_regione(d.properties.id);
+            var expense = me._aggregate_data("regione", d.properties.id, me.interesting)
             // console.log("Regione " + d.properties.id + ": " + expense);
 
             if (expense > 0)
                 d3.select(this).style("fill", me._interpolate_color(expense, mean, margin));
             else
                 d3.select(this).style("fill", "rgb(145, 145, 145)");
-        });
+
+            for (var i=1; i<=info.num_categories; i++) {
+                var tmp = me._aggregate_data("regione", d.properties.id, [i])
+                if (tmp > 0) {
+                    totals[i] += tmp
+                }
+            }
+        })
+
+        for (var i=1; i<=info.num_categories; i++) {
+            me._pie_data.rows.push({
+                c: [
+                    {v: info.category_id_2_label[i]},
+                    {v: totals[i]}
+                ]
+            })
+        }
     }
 
     /******************************************************************/

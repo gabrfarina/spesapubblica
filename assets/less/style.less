@@ -1,6 +1,6 @@
 section#interests {
     margin-top: 30px;
-    border-bottom: 2px solid black;
+    // border-bottom: 2px solid black;
 
     h3 {
         margin: 0 0 15px 0;
@@ -8,8 +8,8 @@ section#interests {
 
     #interest-list {
         overflow-y: scroll;
-        height: 500px;
-        
+        height: 200px;
+
         div {
             &:first-child md-checkbox {
                 margin-top: 0;
@@ -23,19 +23,19 @@ section#interests {
                 // and maybe won't be needed in future versions
                 // of angular-material:
                 outline: 0;
-                
-              
+
+
                 line-height: 21px;
                 margin: 8px;
             }
-          
+
             // radio buttons need 2px more margin left than checkboxes
             md-radio-button {
                 margin-left: 12px;
             }
-          
+
             md-checkbox {
-                margin-left: 10px; 
+                margin-left: 10px;
             }
         }
     }
@@ -88,9 +88,9 @@ div.tooltip {
  	padding-top: 40px;
  	padding-bottom: 40px;
 
- 	& > [flex] {
- 		background-color: white;
- 	}
+    #map, #map-controls {
+        background-color: white;
+    }
 }
 
 #map-buttons {
@@ -193,7 +193,7 @@ path {
 #map-controls {
 	padding: 30px 15px 15px 15px;
     z-index: 1;
-  
+
   overflow: hidden;
 }
 

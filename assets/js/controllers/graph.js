@@ -2,7 +2,9 @@
 
 angular
 .module("spesapubblica")
-.controller("graph_ctrl", ["$scope", "$state", "$stateParams", "info", "mapchart", "dataloader", function($scope, $state, $stateParams, info, mapchart, dataloader) {
+.controller("graph_ctrl", [
+        "$scope", "$state", "$stateParams", "info", "mapchart", "dataloader",
+        function($scope, $state, $stateParams, info, mapchart, dataloader) {
     // pass "info" object to the scope
     $scope.info = info
 

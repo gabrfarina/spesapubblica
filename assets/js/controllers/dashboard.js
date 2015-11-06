@@ -2,43 +2,40 @@
 
 angular
 .module("spesapubblica")
-.controller("dashboard_ctrl", ["$scope", "$state", "$mdDialog", "mapchart", "info", "dataloader", function($scope, $state, $mdDialog, mapchart, info, dataloader) {
+.controller("dashboard_ctrl", [
+        "$scope", "$state", "$mdDialog", "mapchart", "info", "dataloader",
+        function($scope, $state, $mdDialog, mapchart, info, dataloader) {
     // maybe this could be done in a better way
     dataloader.prepare_reports.done(function() {
         info.checkboxes = dataloader.checkboxes
+        info.update_map = function() {
+            mapchart.update_colors(info.granularity)
+        }
         $scope.$apply()
     })
 
-	// make info stuff available to the template
+    $scope.chartObject = {};
+
+    $scope.chartObject.type = "PieChart";
+    $scope.chartObject.data = {
+        "cols": [
+            {id: "t", label: "Tipo di spesa", type: "string"},
+            {id: "s", label: "Valore della spesa", type: "number"}
+        ],
+        "rows": []
+    }
+
+    $scope.chartObject.options = {
+        // 'title': 'How Much Pizza I Ate Last Night'
+    }
+
+    // make the pie available to mapchart
+    mapchart._pie_data = $scope.chartObject.data
+
+    // make info stuff available to the template
     $scope.info = info
 
-    var list = info.selected_categories
-
-    // TODO: maybe move this inside info ?
-    $scope.select = function(item) {
-        //list.clear()
-        while (list.pop()) {}
-
-        list.push(item)
-
-        mapchart.update_colors(info.granularity)
-    }
-
-    // TODO: maybe move this inside info ?
-    $scope.toggle = function(item) {
-        var idx = list.indexOf(item)
-        if (idx > -1) list.splice(idx, 1)
-        else list.push(item)
-
-        mapchart.update_colors(info.granularity)
-    }
-
-    // TODO: maybe move this inside info ?
-    $scope.exists = function(item) {
-        return list.indexOf(item) > -1
-    }
-
-    $scope.open_tutorial = function(ev) {
+    $scope.open_tutorial = $scope.open_authors = function(ev) {
         $mdDialog.show({
 //            controller: DialogController,
             templateUrl: 'assets/html/tutorial.html',
@@ -94,6 +91,11 @@ angular
     }
 
     $scope.go_to_searched = function() {
+        if (!info.selected_item) {
+            console.log("info.selected_item is invalid")
+            return
+        }
+        console.log("info.selected_item is valid")
         switch (info.selected_item.t) {
         case "r":
             $state.go("dashboard.regione", {regione_id: dataloader.regione_id_2_url[info.selected_item.id]})

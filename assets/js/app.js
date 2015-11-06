@@ -1,7 +1,7 @@
 "use strict"
 
 angular
-.module("spesapubblica", ["ngMaterial", "ui.router"])
+.module("spesapubblica", ["ngMaterial", "ui.router", "googlechart"])
 .config(function($mdThemingProvider, $mdIconProvider, $locationProvider, $stateProvider, $urlRouterProvider) {
     // Set up icons
     $mdIconProvider.defaultIconSet("./assets/svg/avatars.svg", 128)
@@ -49,3 +49,9 @@ angular
             controller: "graph_ctrl"
         });
 })
+
+// See: http://stackoverflow.com/a/16818830/747654
+// google.setOnLoadCallback(function() {
+//     angular.bootstrap(document, ['spesapubblica'])
+// })
+// google.load('visualization', '1', {packages: ['corechart']})

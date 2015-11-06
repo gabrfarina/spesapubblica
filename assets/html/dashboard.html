@@ -4,16 +4,28 @@
       <md-button class="menu md-icon-button" hide-gt-md ng-click="open_tutorial()" aria-label="Mostra menu">
         <md-icon md-svg-icon="menu" ></md-icon>
       </md-button>
+
       <h2 style="font-weight: 500; font-size: 105%;" show-gt-md>Spesa pubblica in:</h2>
-      <md-autocomplete md-floating-label="{{info.location}}" md-search-text="info.search_text" md-selected-item="info.selected_item" md-selected-item-change="go_to_searched()" md-items="item in get_matches(info.search_text)" md-item-text="item.display" style="margin-left: 10px">
+
+      <!-- TODO: input width does not adapt to content anymore -->
+      <md-autocomplete
+            md-floating-label="{{info.location}}"
+            md-search-text="info.search_text"
+            md-selected-item="info.selected_item"
+            md-selected-item-change="go_to_searched()"
+            md-items="item in get_matches(info.search_text)"
+            md-item-text="item.display"
+            style="margin-left: 10px; margin-top: 24px;">
         <md-item-template>
-          <span md-highlight-text="searchText">{{item.display}}</span>
+          <span md-highlight-text="info.search_text">{{item.display}}</span>
         </md-item-template>
         <md-not-found>
           Nessun risultato
         </md-not-found>
       </md-autocomplete>
+
       <span flex></span>
+
       <md-button hide-sm ng-click="open_tutorial()"> Guida </md-button>
       <md-button hide-sm ng-click="open_authors()"> Chi siamo </md-button>
     </div>
@@ -21,7 +33,7 @@
 
   <!-- <div id="padding-container" layout-wrap layout-padding layout-fill> -->
     <div layout="row" id="main-container" layout-gt-md="fill">
-        <div flex id="map" class="md-whiteframe-z2">
+        <div flex="65" id="map" class="md-whiteframe-z2">
             <div id="map-tooltip" class="tooltip hidden_t"></div>
             <div id="map-buttons">
                 <md-button class="md-fab" aria-label="Go to parent" id="reset-button" aria-label="" ng-click="go_to_parent();">
@@ -29,11 +41,11 @@
                 </md-button>
             </div>
         </div>
-        <div flex="35" id="map-controls" class="md-whiteframe-z3" hide show-gt-md>
+        <div flex id="map-controls" class="md-whiteframe-z3" hide show-gt-md>
           <div id="map-control-container" layout="column">
             <!-- <fieldset class="standard"> -->
               <section id="granularity">
-              <h3>Granularità</h3>
+              <!-- <h3>Granularità</h3> -->
               <div layout="row" layout-align="center">
                 <!-- <div flex="30">
                   <span style="line-height: 35px">Granularità</span>
@@ -71,10 +83,23 @@
             <section id="interests">
               <h3>Spesa da considerare</h3>
 
+              <div layout="row">
+                <div flex="40">
+                  <md-button class="md-raised" ng-click="info.select_all()">seleziona tutte</md-button>
+                </div>
+                <div flex>
+                  <md-switch class="md-primary" ng-model="info.multiple_selection" ng-click="info.update_map()" aria-label="Selezione multipla">
+                    sel. multipla
+                  </md-switch>
+                </div>
+              </div>
+
+              <md-divider></md-divider>
+
               <div id="interest-list">
                 <!-- If multiple selection is enabled -->
                 <div ng-if="info.multiple_selection" flex="100" ng-repeat="cb in info.checkboxes" class="interest">
-                  <md-checkbox class="md-primary" ng-model="cb.value" aria-label="{{cb.label}}" ng-click="toggle(cb.id)">
+                  <md-checkbox class="md-primary" ng-model="cb.value" aria-label="{{cb.label}}" ng-click="info.toggle(cb.id)">
                     {{ cb.label }}
                   </md-checkbox>
                   <md-divider ng-if="!$last"></md-divider>
@@ -83,24 +108,22 @@
                 <!-- If multiple selection is disabled -->
                 <md-radio-group ng-if="!info.multiple_selection" ng-model="info.radio_selected" class="md-primary">
                   <div flex="100" ng-repeat="cb in info.checkboxes" class="interest">
-                    <md-radio-button ng-click="select(cb.id)" ng-value="cb.id" aria-label="{{cb.label}}">
+                    <md-radio-button ng-click="info.select(cb.id)" ng-value="cb.id" aria-label="{{cb.label}}">
                       {{ cb.label }}
                     </md-radio-button>
                     <md-divider ng-if="!$last"></md-divider>
                   </div>
                 </md-radio-group>
               </div>
-
               <md-divider></md-divider>
-
-              <md-switch class="md-primary" ng-model="info.multiple_selection" aria-label="Selezione multipla">
-                Selezione multipla
-              </md-switch>
             </section>
             <!-- </fieldset> -->
           </div>
 
-          <div ui-view style="margin-top: 20px"></div>
+          <h3>Ripartizione delle spese</h3>
+          <div google-chart chart="chartObject" style="height:300px; width:100%;"></div>
+
+          <div ui-view></div>
         </div>
     </div>
   <!-- </div> -->

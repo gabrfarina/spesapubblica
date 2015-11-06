@@ -141,6 +141,8 @@ angular
                         id: category_id,
                         value: false
                     })
+
+                    info.category_id_2_label[category_id] = category_name
                 })
 
                 service.prepare_reports.resolve();
