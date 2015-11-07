@@ -270,12 +270,15 @@ angular
         }
         switch (state.t) {
         case "r":
+            if (!me._id_2_dom_regione.hasOwnProperty(state.id)) return;  // FIXME: temporary fix
             me._focus(me._id_2_dom_regione[state.id].geometry, .75);
             break;
         case "p":
+            if (!me._id_2_dom_provincia.hasOwnProperty(state.id)) return;  // FIXME: temporary fix
             me._focus(me._id_2_dom_provincia[state.id].geometry, .75);
             break;
         case "c":
+            if (!me._id_2_dom_comune.hasOwnProperty(state.id)) return;  // FIXME: temporary fix
             me._focus(me._id_2_dom_comune[state.id].geometry, .75);
             break;
         case "i":
