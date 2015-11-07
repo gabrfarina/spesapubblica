@@ -235,7 +235,7 @@ angular
         // FIXME: what is the line below?
         me._tooltip.on('mouseenter', me._hide_tooltip);
 
-        me._create_regioni(function(regions) {
+        me._wait_for_regioni = me._create_regioni(function(regions) {
             // Compute the bounds of a feature of interest, then derive scale & translate.
             var b = me._path.bounds(regions),
                 s = .98 / Math.max((b[1][0] - b[0][0]) / me._width, (b[1][1] - b[0][1]) / me._height),
@@ -261,7 +261,7 @@ angular
                     .attr("class", "graticule")
                     .attr("d", me._path(graticule()));
             // -- end of FIXME
-        }, function(){})
+        })
     }
 
     me._focus_state = function(state) {
@@ -282,7 +282,9 @@ angular
             me._focus(me._id_2_dom_comune[state.id].geometry, .75);
             break;
         case "i":
-            me._focus(me._italy_geometry, .92);
+            me._wait_for_regioni.done(function() {
+                me._focus(me._italy_geometry, .92)
+            })
             break;
         default:
             break;
@@ -554,7 +556,7 @@ angular
             //$(".region").show()
 
             // Create regions (always needed)
-            me._create_regioni().done(function(r_ids) {
+            me._wait_for_regioni.done(function(r_ids) {
                 // 1
                 $(".province").remove()
                 me._id_2_dom_provincia = {}
