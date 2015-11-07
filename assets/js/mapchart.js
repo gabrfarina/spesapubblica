@@ -265,6 +265,9 @@ angular
     }
 
     me._focus_state = function(state) {
+        if (!state) {
+            return  // FIXME: this is a temporary fix to avoid calling this function too early
+        }
         switch (state.t) {
         case "r":
             me._focus(me._id_2_dom_regione[state.id].geometry, .75);
