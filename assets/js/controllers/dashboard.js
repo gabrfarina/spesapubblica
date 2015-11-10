@@ -14,6 +14,11 @@ angular
         $scope.$apply()
     })
 
+    $scope.change_year = function() {
+        dataloader.prepare_prepare_reports()  // reload new data
+        mapchart.update_colors(info.granularity)
+    }
+
     $scope.chartObject = {};
 
     $scope.chartObject.type = "PieChart";

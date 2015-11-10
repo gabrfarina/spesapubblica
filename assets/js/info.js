@@ -6,6 +6,7 @@ angular
     console.log("caricato info")
     var service = {}
 
+    service.selected_year = 2014
     service.num_categories = 19
     service.category_id_2_label = {}
     service.granularity = 1

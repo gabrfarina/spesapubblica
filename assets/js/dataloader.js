@@ -96,59 +96,63 @@ angular
     service.provincia_prepare_parents = parent_preparator("data/parents/province.json", "provincia")
     service.comune_prepare_parents = parent_preparator("data/parents/comuni.json", "comune")
 
-    service.prepare_reports = $.Deferred(function() {
-        d3.json("data/reports/2014-12.json", function(error, data) {
-            if (error) throw(error);
+    service.prepare_prepare_reports = function() {
+        service.prepare_reports = $.Deferred(function() {
+            d3.json("data/reports/" + info.selected_year + ".json", function(error, data) {
+                if (error) throw(error);
 
-            service._comune_report = {};
-            service._provincia_report = {};
-            service._regione_report = {};
+                service._comune_report = {};
+                service._provincia_report = {};
+                service._regione_report = {};
 
-            $.when(
-                service.comune_prepare_parents,
-                service.provincia_prepare_parents
-            ).done(function() {
-                _.each(data['data'], function(expenses, comune_id) {
-                    var provincia_id = service.comune_parent[comune_id];
-                    var regione_id = service.provincia_parent[provincia_id];
+                $.when(
+                    service.comune_prepare_parents,
+                    service.provincia_prepare_parents
+                ).done(function() {
+                    _.each(data['data'], function(expenses, comune_id) {
+                        var provincia_id = service.comune_parent[comune_id];
+                        var regione_id = service.provincia_parent[provincia_id];
 
-                    for (var expense_category in expenses) {
-                        if (!service._comune_report.hasOwnProperty(comune_id))
-                            service._comune_report[comune_id] = {};
-                        service._comune_report[comune_id][parseInt(expense_category) + 1] = parseFloat(expenses[expense_category]);
-                    }
+                        for (var expense_category in expenses) {
+                            if (!service._comune_report.hasOwnProperty(comune_id))
+                                service._comune_report[comune_id] = {};
+                            service._comune_report[comune_id][parseInt(expense_category) + 1] = parseFloat(expenses[expense_category]);
+                        }
 
-                    for (var expense_category in expenses) {
-                        if (!service._provincia_report.hasOwnProperty(provincia_id))
-                            service._provincia_report[provincia_id] = {};
-                        if (!service._provincia_report[provincia_id].hasOwnProperty(parseInt(expense_category) + 1))
-                            service._provincia_report[provincia_id][parseInt(expense_category) + 1] = 0;
-                        service._provincia_report[provincia_id][parseInt(expense_category) + 1] += parseFloat(expenses[expense_category]);
-                    }
+                        for (var expense_category in expenses) {
+                            if (!service._provincia_report.hasOwnProperty(provincia_id))
+                                service._provincia_report[provincia_id] = {};
+                            if (!service._provincia_report[provincia_id].hasOwnProperty(parseInt(expense_category) + 1))
+                                service._provincia_report[provincia_id][parseInt(expense_category) + 1] = 0;
+                            service._provincia_report[provincia_id][parseInt(expense_category) + 1] += parseFloat(expenses[expense_category]);
+                        }
 
-                    for (var expense_category in expenses) {
-                        if (!service._regione_report.hasOwnProperty(regione_id))
-                            service._regione_report[regione_id] = {};
-                        if (!service._regione_report[regione_id].hasOwnProperty(parseInt(expense_category) + 1))
-                            service._regione_report[regione_id][parseInt(expense_category) + 1] = 0;
-                        service._regione_report[regione_id][parseInt(expense_category) + 1] += parseFloat(expenses[expense_category]);
-                    }
-                });
+                        for (var expense_category in expenses) {
+                            if (!service._regione_report.hasOwnProperty(regione_id))
+                                service._regione_report[regione_id] = {};
+                            if (!service._regione_report[regione_id].hasOwnProperty(parseInt(expense_category) + 1))
+                                service._regione_report[regione_id][parseInt(expense_category) + 1] = 0;
+                            service._regione_report[regione_id][parseInt(expense_category) + 1] += parseFloat(expenses[expense_category]);
+                        }
+                    });
 
-                _.each(data['legend'], function(category_name, category_id) {
-                    service.checkboxes.push({
-                        label: category_name,
-                        id: category_id,
-                        value: false
+                    _.each(data['legend'], function(category_name, category_id) {
+                        service.checkboxes.push({
+                            label: category_name,
+                            id: category_id,
+                            value: false
+                        })
+
+                        info.category_id_2_label[category_id] = category_name
                     })
 
-                    info.category_id_2_label[category_id] = category_name
-                })
-
-                service.prepare_reports.resolve();
+                    service.prepare_reports.resolve();
+                });
             });
         });
-    });
+    }
+
+    service.prepare_prepare_reports()  // load default year
 
     return service
 }])

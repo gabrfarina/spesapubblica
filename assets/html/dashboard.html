@@ -46,35 +46,47 @@
             <!-- <fieldset class="standard"> -->
               <section id="granularity">
               <!-- <h3>Granularità</h3> -->
-              <div layout="row" layout-align="center">
-                <!-- <div flex="30">
-                  <span style="line-height: 35px">Granularità</span>
-                </div>
-                <div flex>
-                  <div layout="column">
-                    <div flex>
-                      <input type="range" min="1" max="3" step="1" value="2"></input>
-                    </div>
-                    <div flex>
-                      <div layout="row">
-                        <div flex class="legend">regione</div>
-                        <div flex class="legend" style="text-align: center;">provincia</div>
-                        <div flex class="legend" style="text-align: right;">comune</div>
+              <div layout="column" layout-gt-lg="row">
+                <div layout-align="center">
+                  <!-- <div flex="30">
+                    <span style="line-height: 35px">Granularità</span>
+                  </div>
+                  <div flex>
+                    <div layout="column">
+                      <div flex>
+                        <input type="range" min="1" max="3" step="1" value="2"></input>
+                      </div>
+                      <div flex>
+                        <div layout="row">
+                          <div flex class="legend">regione</div>
+                          <div flex class="legend" style="text-align: center;">provincia</div>
+                          <div flex class="legend" style="text-align: right;">comune</div>
+                        </div>
                       </div>
                     </div>
+                  </div> -->
+                  <div layout="row">
+                    <md-button ng-class="{'md-raised': info.granularity === 1}" class="md-primary" ng-click="update_granularity(1)">Regioni</md-button>
+                    <md-button ng-class="{'md-raised': info.granularity === 2}"  class="md-primary" ng-click="update_granularity(2)">Province</md-button>
+                    <md-button ng-class="{'md-raised': info.granularity === 3}"  class="md-primary" ng-click="update_granularity(3)">Comuni</md-button>
                   </div>
-                </div> -->
-                <div layout="row">
-                  <md-button ng-class="{'md-raised': info.granularity === 1}" class="md-primary" ng-click="update_granularity(1)">Regioni</md-button>
-                  <md-button ng-class="{'md-raised': info.granularity === 2}"  class="md-primary" ng-click="update_granularity(2)">Province</md-button>
-                  <md-button ng-class="{'md-raised': info.granularity === 3}"  class="md-primary" ng-click="update_granularity(3)">Comuni</md-button>
+
+                  <!-- <div class="btn-group">
+                    <label class="btn btn-primary" ng-model="info.granularity" btn-radio="1" ng-change="update_granularity()">Regioni</label>
+                    <label class="btn btn-primary" ng-model="info.granularity" btn-radio="2" ng-change="update_granularity()">Province</label>
+                    <label class="btn btn-primary" ng-model="info.granularity" btn-radio="3" ng-change="update_granularity()">Comuni</label>
+                  </div> -->
                 </div>
 
-                <!-- <div class="btn-group">
-                  <label class="btn btn-primary" ng-model="info.granularity" btn-radio="1" ng-change="update_granularity()">Regioni</label>
-                  <label class="btn btn-primary" ng-model="info.granularity" btn-radio="2" ng-change="update_granularity()">Province</label>
-                  <label class="btn btn-primary" ng-model="info.granularity" btn-radio="3" ng-change="update_granularity()">Comuni</label>
-                </div> -->
+                <span flex-offset="5"></span>
+
+                <div flex>
+                  <md-select style="margin: 0; margin-top: 6px;" ng-change="change_year()" ng-model="info.selected_year">
+                    <!-- <md-option ng-repeat="size in sizes" value="{{size}}">{{size}}</md-option> -->
+                    <md-option value="2014">2014</md-option>
+                    <md-option value="2015">2015</md-option>
+                  </md-select>
+                </div>
               </div>
             </section>
             <!-- </fieldset> -->
@@ -84,11 +96,11 @@
               <h3>Spesa da considerare</h3>
 
               <div layout="row">
-                <div flex="40">
+                <div>
                   <md-button class="md-raised" ng-click="info.select_all()">seleziona tutte</md-button>
                 </div>
                 <div flex>
-                  <md-switch class="md-primary" ng-model="info.multiple_selection" ng-click="info.update_map()" aria-label="Selezione multipla">
+                  <md-switch style="margin-top: 10px;" class="md-primary" ng-model="info.multiple_selection" ng-click="info.update_map()" aria-label="Selezione multipla">
                     sel. multipla
                   </md-switch>
                 </div>

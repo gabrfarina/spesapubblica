@@ -10,12 +10,6 @@ section#interests #interest-list {
   overflow-y: scroll;
   height: 500px;
 }
-section#interests #interest-list div:first-child md-checkbox {
-  margin-top: 0;
-}
-section#interests #interest-list div:first-child md-radio-button {
-  margin-top: 0;
-}
 section#interests #interest-list div md-checkbox,
 section#interests #interest-list div md-radio-button {
   outline: 0;
