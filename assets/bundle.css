@@ -1,0 +1,174 @@
+section#interests {
+  margin-top: 30px;
+}
+section#interests h3 {
+  margin: 0 0 15px 0;
+}
+section#interests #interest-list {
+  overflow-y: scroll;
+  height: 200px;
+}
+section#interests #interest-list div md-checkbox,
+section#interests #interest-list div md-radio-button {
+  outline: 0;
+  line-height: 21px;
+  margin: 8px;
+}
+section#interests #interest-list div md-radio-button {
+  margin-left: 12px;
+}
+section#interests #interest-list div md-checkbox {
+  margin-left: 10px;
+}
+section#granularity h3 {
+  margin: 0 0 15px 0;
+}
+path.striped {
+  -webkit-mask: url(#mask-stripe);
+          mask: url(#mask-stripe);
+}
+div.tooltip {
+  color: #fff;
+  background: #222;
+  padding: 5px 10px;
+  /*text-shadow: #f5f5f5 0 1px 0;*/
+  border-radius: 2px;
+  box-shadow: 0px 0px 2px 0px #a6a6a6;
+  opacity: 0.9;
+  position: absolute;
+  z-index: 10;
+}
+div.tooltip.hidden_t {
+  display: none;
+}
+div.tooltip:after {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0);
+  border-top-color: #000000;
+  border-width: 4px;
+  margin-left: -4px;
+}
+#main-container {
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+#main-container #map,
+#main-container #map-controls {
+  background-color: white;
+}
+#map-buttons {
+  float: right;
+}
+#map-buttons #reset-button {
+  margin: 10px 20px;
+  font-size: 120%;
+}
+#map {
+  margin-right: 0;
+}
+#map svg {
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  float: left;
+}
+body {
+  padding: 0;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+svg {
+  shape-rendering: optimizeSpeed;
+}
+path {
+  cursor: pointer;
+}
+#top-bar {
+  padding: 0 5%;
+}
+#top-bar .md-toolbar-tools {
+  padding: 0;
+}
+#top-bar .md-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+#top-bar .md-button:not([disabled]):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#top-bar .md-toolbar-tools > .md-button:last-child {
+  margin-right: 0;
+}
+#top-bar md-autocomplete .md-input {
+  color: white;
+}
+#top-bar md-autocomplete label {
+  color: rgba(255, 255, 255, 0.8);
+}
+#top-bar md-autocomplete button md-icon path {
+  fill: rgba(255, 255, 255, 0.8);
+}
+#enable-pan-switch {
+  position: absolute;
+  bottom: 45px;
+  padding: 5px 10px;
+  margin: 0;
+  color: gray;
+}
+#enable-pan-switch span {
+  opacity: 0;
+}
+#enable-pan-switch:hover span {
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: .5s linear;
+  opacity: 1;
+}
+#page-content {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0px 0px 5px -1px rgba(0, 0, 0, 0.85);
+  padding: 10px;
+}
+#map-controls {
+  padding: 30px 15px 15px 15px;
+  z-index: 1;
+  overflow: hidden;
+}
+.rangeslider {
+  width: 100%;
+  margin: 0 auto 8px auto;
+}
+.legend {
+  font-size: 90%;
+  color: gray;
+  font-variant: small-caps;
+}
+.comune {
+  fill: none;
+  stroke: white;
+  stroke-width: .4;
+}
+.province {
+  fill: none;
+  stroke: white;
+  stroke-width: .6;
+  /*stroke-dasharray: 2, 3;*/
+}
+.region {
+  fill: none;
+  stroke: white;
+  stroke-width: 1;
+}
+.graticule {
+  stroke: rgba(0, 0, 0, 0.2);
+}
+
+/*# sourceMappingURL=bundle.css.map */
