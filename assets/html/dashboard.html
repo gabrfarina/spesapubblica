@@ -118,9 +118,9 @@
                 </div>
 
                 <!-- If multiple selection is disabled -->
-                <md-radio-group ng-if="!info.multiple_selection" ng-model="info.radio_selected" class="md-primary">
+                <md-radio-group ng-if="!info.multiple_selection" ng-change="info.select()" ng-model="info.radio_selected" class="md-primary">
                   <div flex="100" ng-repeat="cb in info.checkboxes" class="interest">
-                    <md-radio-button ng-click="info.select(cb.id)" ng-value="cb.id" aria-label="{{cb.label}}">
+                    <md-radio-button ng-value="cb.id" aria-label="{{cb.label}}">
                       {{ cb.label }}
                     </md-radio-button>
                     <md-divider ng-if="!$last"></md-divider>
